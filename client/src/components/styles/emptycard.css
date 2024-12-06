@@ -1,0 +1,35 @@
+.container_emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #555;
+  margin-top: 50px;
+  min-height: 400px;
+}
+
+
+.container_emptyCard h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.container_emptyCard p {
+  font-size: 1.5rem;
+  color: #666;
+}
+
+/* Phone (Extra small devices: max-width 576px) */
+
+
+@media (max-width: 576px) {
+    .container_emptyCard h1{
+        font-size: 2rem;
+    }
+
+    .container_emptyCard p{
+        font-size: 1rem;
+    }
+}

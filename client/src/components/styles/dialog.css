@@ -1,0 +1,27 @@
+
+.dialog_content {
+  font-size: 1.5rem;
+  color: #555;
+}
+
+.input_title,
+.input_content {
+  width: 90%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1rem;
+  resize: none;
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+}
+
+.title_content, .title_input{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #555;
+    margin: 0px 5px;
+    margin-bottom: 10px;
+}
+
