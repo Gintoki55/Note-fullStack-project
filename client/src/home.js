@@ -115,7 +115,6 @@ function Home() {
           },
         });
         const notes = await response.data;
-        console.log('Fetched Notes:', notes);
         setPosts(notes);
       } catch(error){
         console.error('Error fetching notes:', error);
@@ -139,7 +138,6 @@ const handleAddCard = (newCard) => {
 
   addNotePromise
     .then((response) => {
-      console.log(response);
       addPost(newCard); // Add the new post to the context
       fetchPosts()
     })
@@ -164,7 +162,6 @@ const handleAddCard = (newCard) => {
     })
       toast.promise(updateNotePromise, status[1]);
       updateNotePromise.then(function (response) {
-      console.log('Updated Note:', response);
       editPost(updatedCard); // Update the post in the context
       fetchPosts()
     })
@@ -185,7 +182,6 @@ const handleAddCard = (newCard) => {
     })
      toast.promise(deleteNotePromise, status[2]);
     deleteNotePromise.then(function (response) {
-       console.log('Deleted Note:', response);
       deletePost(cardToDelete.id); // Delete the post from the context
       fetchPosts()
     })
