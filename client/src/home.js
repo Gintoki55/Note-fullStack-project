@@ -156,7 +156,7 @@ const handleAddCard = (newCard) => {
   // Handle editing a card
   const handleEditCard = (updatedCard) => {
    if (!isOffline){
-      const updateNotePromise = axios.put(`https://note-backend-tgdq.onrender.com/update-note${updatedCard.id}`, updatedCard, {
+      const updateNotePromise = axios.put(`https://note-backend-tgdq.onrender.com/update-note/${updatedCard.id}`, updatedCard, {
       headers: {
         Authorization: `Bearer ${cookies.access_token}`,
       },
