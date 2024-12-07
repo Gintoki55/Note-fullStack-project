@@ -17,6 +17,7 @@ function SignUp() {
     const [error, setError] = useState('');
     const [cookies, setCookie] = useCookies(['access_token']);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
+    const apiBaseUrl = "https://note-backend-tgdq.onrender.com";
 
     useEffect(() => {
     const handleOnline = () => {
@@ -57,7 +58,7 @@ function SignUp() {
       }
       
       // Make API call
-      const response = await axios.post('http://localhost:3001/register', {
+      const response = await axios.post(apiBaseUrl, {
        username, email, password
       });
       

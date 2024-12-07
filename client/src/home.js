@@ -24,6 +24,7 @@ function Home() {
   const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const apiBaseUrl = "https://note-backend-tgdq.onrender.com";
   useEffect(() => {
     const handleOnline = () => {
       setIsOffline(false);
@@ -109,7 +110,7 @@ function Home() {
   // Handle fetch  a posts 
       const fetchPosts = async () =>{
       try{
-        const response = await axios.get('http://localhost:3001/my-note', {
+        const response = await axios.get(apiBaseUrl, {
           headers: {
             Authorization: `Bearer ${cookies.access_token}`,
           },
@@ -128,7 +129,7 @@ function Home() {
   // Handle adding a new card
 const handleAddCard = (newCard) => {
   if (!isOffline){
-    const addNotePromise = axios.post('http://localhost:3001/add-note', newCard, {
+    const addNotePromise = axios.post(apiBaseUrl, newCard, {
     headers: {
       Authorization: `Bearer ${cookies.access_token}`,
     },
@@ -155,7 +156,7 @@ const handleAddCard = (newCard) => {
   // Handle editing a card
   const handleEditCard = (updatedCard) => {
    if (!isOffline){
-      const updateNotePromise = axios.put(`http://localhost:3001/update-note/${updatedCard.id}`, updatedCard, {
+      const updateNotePromise = axios.put(`https://note-backend-tgdq.onrender.com/${updatedCard.id}`, updatedCard, {
       headers: {
         Authorization: `Bearer ${cookies.access_token}`,
       },
@@ -175,7 +176,7 @@ const handleAddCard = (newCard) => {
   const handleDeleteCard = (cardToDelete) => {
 
     if(!isOffline){
-      const deleteNotePromise = axios.delete(`http://localhost:3001/delete-note/${cardToDelete.id}`, {
+      const deleteNotePromise = axios.delete(`https://note-backend-tgdq.onrender.com/${cardToDelete.id}`, {
       headers: {
         Authorization: `Bearer ${cookies.access_token}`,
       },

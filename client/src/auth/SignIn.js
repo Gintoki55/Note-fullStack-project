@@ -20,6 +20,7 @@ function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const apiBaseUrl = "https://note-backend-tgdq.onrender.com";
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -64,7 +65,7 @@ function SignIn() {
       setLoading(true);
       
       // Make API call
-      const response = await axios.post('http://localhost:3001/login', {
+      const response = await axios.post(apiBaseUrl, {
         email,
         password,
       });

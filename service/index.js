@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const _PORT = 3001;
 const dotenv = require('dotenv');
 dotenv.config();
