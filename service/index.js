@@ -22,7 +22,7 @@ const username = process.env.MONGO_USERNAME;
 const password = process.env.MONGO_PASSWORD;
 const dbName = process.env.MONGO_DB_NAME;
 const MONGO_URI = `mongodb+srv://${username}:${password}@mern-note.wlxir.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=mern-note`;
-
+const usersUrl = process.env.GET_ALL_USERS;
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)
@@ -39,7 +39,7 @@ mongoose.connect(MONGO_URI)
 const UserModel = require('./models/users')
 
 // get all users 
-app.get('/users',async (req, res) => {
+app.get(`/${usersUrl}`,async (req, res) => {
     const users = await UserModel.find();
     res.json(users);
 })

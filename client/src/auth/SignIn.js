@@ -65,7 +65,7 @@ function SignIn() {
       setLoading(true);
       
       // Make API call
-      const response = await axios.post(apiBaseUrl, {
+      const response = await axios.post(`${apiBaseUrl}/login`, {
         email,
         password,
       });
