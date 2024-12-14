@@ -4,16 +4,27 @@ const _PORT = 3001;
 const dotenv = require('dotenv');
 dotenv.config();
 
-
 const app = express();
+// لحمايه من iframes
+const helmet = require('helmet');
+app.use(helmet());
+
+
+
+
 
 // Middleware
 const cors = require('cors');
 app.use(
     cors({
-        origin: '*',
+        origin: [
+            'http://localhost:3000', // رابط الواجهة أثناء التطوير
+            'https://subtle-cassata-13f01e.netlify.app', // رابط الإنتاج
+        ],
+        credentials: true, // السماح باستخدام بيانات الاعتماد (Cookies, Authorization headers)
     })
 );
+app.options('*', cors()); // لمعالجة طلبات التحقق المسبق
 app.use(express.json());
 
 // MongoDB connection URI
@@ -84,7 +95,7 @@ app.post('/register', async (req, res) => {
         const newUser = new UserModel({ 
             username, 
             email, 
-            password: hashedPassword 
+            password: hashedPassword,
         });
         await newUser.save();
 
@@ -92,7 +103,7 @@ app.post('/register', async (req, res) => {
 
         res.status(201).json({
             message: 'User registered successfully.',
-            user: { id: newUser._id, email: newUser.email, name: newUser.username }, 
+            user: { id: newUser._id, email: newUser.email, name: newUser.username}, 
             token,
         });
     } catch (error) {
@@ -136,6 +147,14 @@ app.post('/login', async (req, res) => {
       });
     }
 
+    if (user.isGoogleUser) {
+      return res.status(400).json({
+        error: true,
+        message: 'This account was created using Google Sign-In and does not have a password. Please use Google Sign-In or reset your password to create one.',
+      });
+    }
+
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
@@ -150,7 +169,7 @@ app.post('/login', async (req, res) => {
     return res.json({
       error: false,
       message: 'User logged in successfully',
-      user: { id: user._id, email: user.email, name: user.username }, // Send minimal user info
+      user: { id: user._id, email: user.email, name: user.username ,img:user.img}, // Send minimal user info
       token, // Send JWT token for authentication
     });
   } catch (error) {
@@ -277,6 +296,81 @@ app.put('/update-note/:id', authenticateToken, async (req, res) => {
       message: 'Failed to update note', 
       details: error.message 
     });
+  }
+});
+
+//// google login
+
+const { googleLogin } = require('./controllers/authController');
+app.post('/google-login', googleLogin);
+
+
+
+
+
+const nodemailer = require('nodemailer');
+
+// إعداد بيانات SMTP لـ SendGrid
+const transporter = nodemailer.createTransport({
+  host: "smtp.sendgrid.net",
+  port: 587,
+  secure: false, // استخدم `false` إذا كنت تستخدم المنفذ 587
+  auth: {
+    user: "apikey", // يجب أن يكون دائمًا "apikey"
+    pass: process.env.SENDGRID_API_KEY, // مفتاح API الخاص بـ SendGrid
+  },
+});
+
+
+// طلب إعادة تعيين كلمة المرور
+app.post('/request-reset-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: true, message: "We couldn’t find an account with that email address. Please double-check or sign up if you’re new." });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+
+    const resetLink = `https://subtle-cassata-13f01e.netlify.app/reset-password?token=${token}`;
+    await transporter.sendMail({
+      from: 'Note App <ahmedbarkhed7@gmail.com>',
+      to: email,
+      subject: 'Password Reset Request',
+      html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link will expire in 15 minutes.</p>`,
+    });
+
+    res.json({ error: false, message: 'Password reset link sent to email.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: true, message: 'Error sending reset link.' });
+  }
+});
+
+
+// إعادة تعيين كلمة المرور
+app.post('/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await UserModel.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ error: true, message: 'User not found' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.isGoogleUser = false;
+    await user.save();
+
+    res.json({ error: false, message: 'Password has been reset successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ error: true, message: 'Invalid or expired token.' });
   }
 });
 

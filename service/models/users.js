@@ -13,7 +13,13 @@ const usersSchema = new Schema({
     },
     password: {
         type: String,
-        required: true,
+    },
+    img: {
+        type: String,
+    },
+    isGoogleUser: {
+        type: Boolean,
+        default: false,
     },
 })
 
