@@ -24,7 +24,7 @@ function Home() {
   const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const apiBaseUrl = "https://note-backend-tgdq.onrender.com";
+  const apiBaseUrl = "https://note-app-backend-wzcl.onrender.com";
   useEffect(() => {
     const handleOnline = () => {
       setIsOffline(false);

@@ -80,7 +80,7 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 44, height: 44 }}>
+            <Avatar sx={{ width: 44, height: 44 }} src={data.user?.img || ""}>
               {getInitials(data?.user?.name || 'Guest')}
             </Avatar>
           </IconButton>

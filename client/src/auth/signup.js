@@ -7,6 +7,8 @@ import { Toaster, toast } from 'react-hot-toast';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import './auth.css';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css'; // Import NProgress styles
 function SignUp() {
     const navigate = useNavigate(); // Initialize navigation
     const [IsSign, setIsSign] = useState(false);
@@ -17,39 +19,14 @@ function SignUp() {
     const [error, setError] = useState('');
     const [cookies, setCookie] = useCookies(['access_token']);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
-    const apiBaseUrl = "https://note-backend-tgdq.onrender.com";
+    const apiBaseUrl = "https://note-app-backend-wzcl.onrender.com";
+    NProgress.configure({ showSpinner: false });
 
-    useEffect(() => {
-    const handleOnline = () => {
-      setIsOffline(false);
-      toast('You are back online!', {
-        icon: '🌐',
-        style: { background: 'green', color: '#fff' },
-      });
-    };
-
-    const handleOffline = () => {
-      setIsOffline(true);
-      toast('You are offline!', {
-        icon: '🌐',
-        style: { background: 'red', color: '#fff' },
-      });
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [])
-
-  
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    setError('');
     try {
+      NProgress.start();
       setLoading(true);
 
       if (isOffline) {
@@ -78,6 +55,7 @@ function SignUp() {
     } finally {
       // Ensure loading state is reset
       setLoading(false);
+      NProgress.done();
     }
   };
 

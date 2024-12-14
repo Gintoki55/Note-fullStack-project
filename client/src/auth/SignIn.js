@@ -3,14 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Toaster, toast } from 'react-hot-toast';
+// import { Toaster, toast } from 'react-hot-toast';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import './auth.css';
+import GoogleLogin from './googleLogin';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css'; // Import NProgress styles
 
 function SignIn() {
-
   const navigate = useNavigate(); 
   const [cookies, setCookie] = useCookies(['access_token']);
   const [error, setError] = useState('');
@@ -20,41 +22,16 @@ function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const apiBaseUrl = "https://note-backend-tgdq.onrender.com";
+  const apiBaseUrl = "https://note-app-backend-wzcl.onrender.com";
+  NProgress.configure({ showSpinner: false });
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOffline(false);
-      toast('You are back online!', {
-        icon: '🌐',
-        style: { background: 'green', color: '#fff' },
-      });
-    };
-
-    const handleOffline = () => {
-      setIsOffline(true);
-      toast('You are offline!', {
-        icon: '🌐',
-        style: { background: 'red', color: '#fff' },
-      });
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [])
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+    setError('')
     if (isOffline) {
       setError('Please check your internet connection and try again.');
       return;
@@ -63,7 +40,7 @@ function SignIn() {
 
     try {
       setLoading(true);
-      
+      NProgress.start();
       // Make API call
       const response = await axios.post(`${apiBaseUrl}/login`, {
         email,
@@ -85,6 +62,7 @@ function SignIn() {
     } finally {
       // Ensure loading state is reset
       setLoading(false);
+      NProgress.done();
     }
 };
 
@@ -140,17 +118,24 @@ function SignIn() {
                 ),
               }}
             />
+            <div className='auth_pass_req'><Link to='/requestRessetPassword'>Forget your password?</Link></div>
             <button type="submit" className="auth_button" disabled={loading}>
               {loading ? 'Loading...' : 'Login'}
             </button>
             {error && <p className="signIn_erorr_message">{error}</p>}
+            <div style={{
+            marginTop: '10px',
+            textAlign: 'center',
+          }}>or</div>
+          <div style={{display:"flex", justifyContent:"center"}}>
+            <GoogleLogin />
+          </div>
           </form>
           <p className="auth_redirect">
             Don't have an account? <Link to="/signup">Sign Up</Link>
           </p>
         </div>
       </div>
-      <Toaster position="bottom-center" />
     </div>
   );
 }
